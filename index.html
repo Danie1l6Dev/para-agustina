@@ -1,0 +1,222 @@
+<title>Para Agustina</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500;1,9..144,600&family=Karla:wght@400;500;600&family=Caveat:wght@600;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+  <defs>
+    <g id="flowerCore">
+      <g fill="var(--yellow)">
+        <g transform="rotate(0)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+        <g transform="rotate(60)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+        <g transform="rotate(120)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+        <g transform="rotate(180)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+        <g transform="rotate(240)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+        <g transform="rotate(300)"><ellipse cx="0" cy="-9" rx="5.5" ry="9"/></g>
+      </g>
+      <circle r="5" fill="var(--yellow-deep)"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <div class="fx-layer" id="fxLayer"></div>
+
+  <button class="mini-player" id="miniPlayBtn" aria-label="Pausar música" hidden>
+    <svg id="miniIconPlay" width="16" height="16" viewBox="0 0 24 24" style="display:none"><path d="M6,4 L20,12 L6,20 Z" fill="currentColor"/></svg>
+    <svg id="miniIconPause" width="16" height="16" viewBox="0 0 24 24"><rect x="5" y="4" width="5" height="16" fill="currentColor"/><rect x="14" y="4" width="5" height="16" fill="currentColor"/></svg>
+  </button>
+
+  <p class="lyrics-panel" id="lyricsPanel" aria-hidden="true"></p>
+
+  <nav class="dots" id="dotsNav" aria-label="Progreso">
+    <button class="dot" data-target="screen-3" aria-label="Música"></button>
+    <button class="dot" data-target="screen-0" aria-label="Portada"></button>
+    <button class="dot" data-target="screen-1" aria-label="Jardín"></button>
+    <button class="dot" data-target="screen-2" aria-label="Pétalos"></button>
+    <button class="dot" data-target="screen-5" aria-label="Cierre"></button>
+    <button class="dot" data-target="screen-4" aria-label="Carta"></button>
+  </nav>
+
+  <!-- ============ Pantalla 3 — Música (primera) ============ -->
+  <section class="screen" id="screen-3">
+    <div class="screen-inner">
+      <p class="eyebrow" id="songIntro"></p>
+      <h2 class="screen-title">Una canción para ti</h2>
+      <div class="player-card">
+        <div class="cover">
+          <img src="foto-agus.jpg" alt="Agustina">
+        </div>
+        <div>
+          <p class="song-title" id="songTitle"></p>
+          <p class="song-artist" id="songArtist"></p>
+        </div>
+        <button class="play-btn" id="playBtn" aria-label="Reproducir">
+          <svg id="iconPlay" width="18" height="18" viewBox="0 0 24 24"><path d="M6,4 L20,12 L6,20 Z" fill="currentColor"/></svg>
+          <svg id="iconPause" width="18" height="18" viewBox="0 0 24 24" style="display:none"><rect x="5" y="4" width="5" height="16" fill="currentColor"/><rect x="14" y="4" width="5" height="16" fill="currentColor"/></svg>
+        </button>
+        <div class="player-controls">
+          <div class="progress-track" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="time-row"><span id="timeCurrent">0:00</span><span id="timeTotal">0:00</span></div>
+        </div>
+        <p class="song-note" id="songNote"></p>
+      </div>
+      <p class="petal-hint" id="playHint">Tocá play para comenzar.</p>
+      <audio id="audioEl" preload="none"></audio>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 0 — Portada ============ -->
+  <section class="screen" id="screen-0">
+    <div class="stamp" aria-hidden="true"><span class="date-fix">21<span class="new">22</span></span>&nbsp;&middot;&nbsp;09</div>
+    <div class="screen-inner">
+      <div class="bouquet-wrap" id="bouquetWrap">
+        <svg viewBox="0 0 300 260" role="img" aria-label="Ramo de flores amarillas, toca una flor">
+          <g class="stem-sway" style="animation-duration:3.4s; animation-delay:-.6s;">
+            <path d="M150,250 Q120,170 110,84" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+            <g transform="translate(126,188) rotate(-32)"><path d="M0,0 Q11,-7 22,0 Q11,7 0,0 Z" fill="var(--green)"/></g>
+            <g transform="translate(110,84) scale(1.15)">
+              <g class="flower-anim flower-btn" tabindex="0" role="button" aria-label="Florece" style="animation-delay:.05s">
+                <use href="#flowerCore"/>
+              </g>
+            </g>
+          </g>
+          <g class="stem-sway" style="animation-duration:4s; animation-delay:-1.8s;">
+            <path d="M150,252 Q165,150 170,58" fill="none" stroke="var(--green-deep)" stroke-width="4" stroke-linecap="round"/>
+            <g transform="translate(158,158) rotate(24)"><path d="M0,0 Q11,-7 22,0 Q11,7 0,0 Z" fill="var(--green)"/></g>
+            <g transform="translate(170,58) scale(1)">
+              <g class="flower-anim flower-btn" tabindex="0" role="button" aria-label="Florece" style="animation-delay:.22s">
+                <use href="#flowerCore"/>
+              </g>
+            </g>
+          </g>
+          <g class="stem-sway" style="animation-duration:3.7s; animation-delay:-2.4s;">
+            <path d="M150,250 Q190,180 205,102" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+            <g transform="translate(182,196) rotate(-18)"><path d="M0,0 Q10,-6 20,0 Q10,6 0,0 Z" fill="var(--green)"/></g>
+            <g transform="translate(205,102) scale(.85)">
+              <g class="flower-anim flower-btn" tabindex="0" role="button" aria-label="Florece" style="animation-delay:.4s">
+                <use href="#flowerCore"/>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="eyebrow"><span class="date-fix">21<span class="new">22</span></span> de septiembre</p>
+      <h1 class="screen-title" data-field="intro.title"></h1>
+      <p class="screen-sub" data-field="intro.subtitle"></p>
+      <button class="enter-btn" id="enterBtn">
+        <span data-field="intro.cta"></span>
+        <svg width="14" height="10" viewBox="0 0 20 12"><path d="M2,2 L10,10 L18,2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ Pantalla 1 — Jardín ============ -->
+  <section class="screen" id="screen-1">
+    <div class="ambient-petals" aria-hidden="true">
+      <span class="petal" style="left:8%; animation-duration:9s; animation-delay:.3s;"></span>
+      <span class="petal" style="left:30%; animation-duration:7.5s; animation-delay:2.1s;"></span>
+      <span class="petal" style="left:70%; animation-duration:10s; animation-delay:1s;"></span>
+      <span class="petal" style="left:90%; animation-duration:8s; animation-delay:2.8s;"></span>
+    </div>
+    <div class="screen-inner">
+      <p class="eyebrow">Un jardín</p>
+      <h2 class="screen-title">Tocá cada flor</h2>
+      <p class="screen-sub">Una por una.</p>
+      <div class="garden-grid" id="gardenGrid"></div>
+      <div class="garden-message" id="gardenMessage"><p class="placeholder-text">Tocá una flor para leer su mensaje.</p></div>
+    </div>
+    <button class="next-hint" data-next aria-label="Siguiente">
+      <svg width="20" height="14" viewBox="0 0 20 12"><path d="M2,2 L10,10 L18,2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Seguir</span>
+    </button>
+  </section>
+
+  <!-- ============ Pantalla 2 — Pétalos ============ -->
+  <section class="screen" id="screen-2">
+    <div class="screen-inner">
+      <p class="eyebrow">Un pétalo a la vez</p>
+      <h2 class="screen-title" id="petalsTitle"></h2>
+      <p class="petal-hint" id="petalsHint"></p>
+      <div class="big-flower-wrap">
+        <svg viewBox="-75 -75 150 150" id="bigFlowerSvg" role="img" aria-label="Flor con pétalos para tocar"></svg>
+      </div>
+      <p class="petal-progress" id="petalProgress"></p>
+      <div class="garden-message" id="petalMessage"><p class="placeholder-text">Tocá un pétalo para descubrirlo.</p></div>
+    </div>
+    <button class="next-hint" data-next aria-label="Siguiente">
+      <svg width="20" height="14" viewBox="0 0 20 12"><path d="M2,2 L10,10 L18,2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Seguir</span>
+    </button>
+  </section>
+
+  <!-- ============ Pantalla 5 — Cierre ============ -->
+  <section class="screen" id="screen-5">
+    <div class="screen-inner">
+      <p class="screen-sub" id="closingTapLabel" style="margin-bottom:10px"></p>
+      <button class="tap-flower" id="tapFlower" aria-label="Sumar un pensamiento">
+        <svg viewBox="-24 -24 48 48" width="78" height="78"><use href="#flowerCore"/></svg>
+      </button>
+      <p class="tap-count">Van <b id="tapCountNum">0</b></p>
+
+      <div class="distance" aria-hidden="true">
+        <span id="fromCity"></span>
+        <span class="line"></span>
+        <span class="km" id="kmCount"></span>
+        <span class="line"></span>
+        <span id="toCity"></span>
+      </div>
+    </div>
+    <button class="next-hint" data-next aria-label="Siguiente">
+      <svg width="20" height="14" viewBox="0 0 20 12"><path d="M2,2 L10,10 L18,2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span>Seguir</span>
+    </button>
+  </section>
+
+  <!-- ============ Pantalla 4 — Carta (última) ============ -->
+  <section class="screen" id="screen-4">
+    <div class="screen-inner">
+      <p class="eyebrow">Una carta</p>
+      <h2 class="screen-title">Abrí el sobre</h2>
+
+      <div class="envelope-zone">
+        <button class="envelope-btn" id="envelopeBtn" aria-label="Abrir la carta">
+          <svg viewBox="0 0 220 150" width="220" height="150">
+            <rect x="6" y="18" width="208" height="122" rx="4" fill="var(--paper)" stroke="var(--yellow-deep)" stroke-width="2"/>
+            <path d="M10,22 L110,92 L210,22" fill="none" stroke="var(--yellow-deep)" stroke-width="2"/>
+            <g class="envelope-flap">
+              <path d="M6,22 L110,90 L214,22 L214,18 Q214,18 210,18 L10,18 Q6,18 6,18 Z" fill="var(--yellow-pale)" stroke="var(--yellow-deep)" stroke-width="2"/>
+              <circle cx="110" cy="52" r="13" fill="var(--yellow-deep)"/>
+              <g transform="translate(110,52) scale(.8)"><use href="#flowerCore"/></g>
+            </g>
+          </svg>
+          <span class="envelope-label" id="envelopeLabel">ABRIR</span>
+        </button>
+      </div>
+
+      <article class="letter-card" id="letterCard">
+        <button class="bulb-btn" id="bulbBtn" aria-pressed="false" aria-label="Tocá para encender la luz">
+          <svg viewBox="0 0 60 90" width="60" height="90">
+            <g id="bulbGlass">
+              <path class="glass" d="M30,4 C14,4 6,16 6,30 C6,42 14,48 18,56 L18,66 L42,66 L42,56 C46,48 54,42 54,30 C54,16 46,4 30,4 Z"/>
+              <path class="filament" d="M22,26 L30,40 L26,40 L34,54" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <rect x="20" y="66" width="20" height="6" rx="1.5" class="bulb-base"/>
+            <rect x="22" y="73" width="16" height="5" rx="1.5" class="bulb-base"/>
+            <rect x="24" y="79" width="12" height="4" rx="1.5" class="bulb-base"/>
+          </svg>
+        </button>
+        <p class="bulb-caption" id="bulbCaption"></p>
+
+        <p class="greeting" id="letterGreeting"></p>
+        <div id="letterBody"></div>
+        <p class="farewell"><span class="lead" id="letterSignOff"></span><span class="signature" id="letterSignature"></span></p>
+
+        <p class="teaser" id="teaserText"></p>
+        <p class="names" id="namesText"></p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>

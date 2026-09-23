@@ -1,0 +1,787 @@
+/* ==========================================================================
+   Para Agustina — estilos
+   ========================================================================== */
+
+:root{
+  --ground:#FBF2DA;
+  --ground-deep:#F1DE9E;
+  --paper:#FFFCF3;
+  --ink:#2E2013;
+  --ink-soft:#6B5A42;
+  --ink-faint:#9C8B6E;
+  --yellow:#F2B705;
+  --yellow-deep:#C4890A;
+  --yellow-pale:#FBE79B;
+  --green:#4B6043;
+  --green-deep:#33452E;
+  --blush:#E37E63;
+  color-scheme: light;
+}
+
+*{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body{ background: var(--ground); }
+
+html{ scroll-snap-type: y proximity; }
+body{
+  scroll-snap-type: y proximity;
+  font-family: 'Karla', -apple-system, 'Segoe UI', sans-serif;
+  color: var(--ink);
+}
+
+h1, h2, h3, p{ margin: 0; }
+
+button{ font: inherit; color: inherit; }
+
+.app{
+  position: relative;
+  background: radial-gradient(120% 45% at 50% 0%, var(--ground-deep) 0%, var(--ground) 60%);
+  overflow: hidden;
+}
+
+/* ---------- capa compartida de pétalos que estallan al tocar ---------- */
+.fx-layer{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 40;
+}
+.fx-petal{
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  background: var(--yellow);
+  border-radius: 0 100% 0 100%;
+  transform: translate(0,0) rotate(0deg);
+  animation: fxfall .95s ease-out forwards;
+}
+@keyframes fxfall{
+  to{ transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+}
+
+/* ---------- pétalos ambiente cayendo ---------- */
+.ambient-petals{
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+.petal{
+  position: absolute;
+  top: -6%;
+  width: 9px;
+  height: 13px;
+  background: var(--yellow);
+  opacity: .8;
+  border-radius: 0 100% 0 100%;
+  animation: fall linear infinite;
+}
+@keyframes fall{
+  0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+  8%   { opacity: .8; }
+  100% { transform: translateY(1100%) rotate(340deg); opacity: 0; }
+}
+
+/* ---------- botón flotante de pausa (aparece al empezar la música) ---------- */
+.mini-player{
+  position: fixed;
+  left: max(10px, env(safe-area-inset-left, 0px));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ground);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 10px 22px -10px rgba(46,32,19,.55);
+  transition: transform .15s, opacity .3s;
+}
+.mini-player[hidden]{ display: none; }
+.mini-player:active{ transform: translateY(-50%) scale(.92); }
+.mini-player:focus-visible{ outline: 2px solid var(--yellow-deep); outline-offset: 3px; }
+
+/* ---------- letra sincronizada, lateral derecho (solo en la pantalla
+   de música — se oculta en el resto para no taparse con otro contenido) ---------- */
+.lyrics-panel{
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right, 0px));
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  max-width: 150px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: uppercase;
+  font-size: 15px;
+  line-height: 1.25;
+  letter-spacing: .01em;
+  text-align: right;
+  color: var(--yellow-deep);
+  text-shadow: 1px 1px 0 var(--yellow-pale), 2px 3px 6px rgba(46,32,19,.3);
+  z-index: 45;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+}
+.lyrics-panel.show{ opacity: 1; transform: translateY(0); }
+
+/* ---------- indicador de progreso lateral ---------- */
+.dots{
+  position: fixed;
+  right: max(10px, env(safe-area-inset-right, 0px));
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 50;
+}
+.dot{
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  opacity: .35;
+  transition: opacity .3s, background .3s, transform .3s;
+}
+.dot.active{
+  background: var(--yellow-deep);
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+/* ---------- estructura de pantalla ---------- */
+.screen{
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(30px, 8vw, 56px) 20px;
+  text-align: center;
+}
+.screen-inner{
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.date-fix{
+  position: relative;
+  display: inline-block;
+  text-decoration: line-through;
+  text-decoration-color: var(--yellow-deep);
+  text-decoration-thickness: 2px;
+}
+.date-fix .new{
+  position: absolute;
+  left: 1px;
+  top: -0.9em;
+  font-family: 'Caveat', cursive;
+  font-size: 1.35em;
+  font-weight: 700;
+  color: var(--yellow-deep);
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1;
+  transform: rotate(-10deg);
+  white-space: nowrap;
+}
+
+.eyebrow{
+  font-family: 'Karla', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-size: 12px;
+  color: var(--yellow-deep);
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.screen-title{
+  font-family: 'Fraunces', 'Iowan Old Style', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(26px, 7.5vw, 38px);
+  line-height: 1.08;
+  margin: 0 0 10px;
+  text-wrap: balance;
+}
+.screen-sub{
+  font-style: italic;
+  font-family: 'Fraunces', Georgia, serif;
+  color: var(--ink-soft);
+  font-size: clamp(14.5px, 3.6vw, 17px);
+  max-width: 30ch;
+  margin: 0 auto;
+}
+
+/* ---------- flecha "seguir" ---------- */
+.next-hint{
+  position: absolute;
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  z-index: 3;
+}
+.next-hint span{
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .14em;
+}
+.next-hint svg{ animation: bob 1.8s ease-in-out infinite; }
+@keyframes bob{
+  0%,100%{ transform: translateY(0); }
+  50%{ transform: translateY(6px); }
+}
+
+/* ==========================================================================
+   Pantalla 0 — Portada
+   ========================================================================== */
+.stamp{
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--paper);
+  border: 2px dashed var(--yellow-deep);
+  border-radius: 5px;
+  padding: 6px 9px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-soft);
+  box-shadow: 0 8px 18px -10px rgba(46,32,19,.5);
+  transform: rotate(6deg);
+  animation: stampSwing 5s ease-in-out infinite;
+  z-index: 3;
+}
+@keyframes stampSwing{ 0%,100%{ transform: rotate(6deg); } 50%{ transform: rotate(2deg); } }
+
+.bouquet-wrap{
+  position: relative;
+  width: clamp(190px, 50vw, 280px);
+  margin: 0 auto clamp(10px, 3vw, 18px);
+}
+.bouquet-wrap svg{ width: 100%; height: auto; display: block; overflow: visible; }
+
+.stem-sway{
+  transform-box: view-box;
+  transform-origin: 150px 251px;
+  animation-name: stemSway;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes stemSway{
+  0%, 100%{ transform: rotate(-3deg); }
+  50%{ transform: rotate(3deg); }
+}
+
+.flower-anim{
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bloom .85s cubic-bezier(.34,1.56,.64,1) both;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+.flower-anim:focus{ outline: none; }
+.flower-anim:focus-visible{
+  outline: none;
+  filter: drop-shadow(0 0 5px var(--ink));
+}
+@keyframes bloom{
+  from{ transform: scale(.55) rotate(-18deg); opacity: 0; }
+  to{ transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.pulse{ animation: pulse .35s ease-out; }
+@keyframes pulse{
+  0%{ transform: scale(1); }
+  40%{ transform: scale(1.16); }
+  100%{ transform: scale(1); }
+}
+
+.enter-btn{
+  margin-top: clamp(18px, 5vw, 28px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ink);
+  color: var(--ground);
+  border: none;
+  border-radius: 999px;
+  padding: 13px 26px;
+  font-family: 'Karla', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 14px 30px -14px rgba(46,32,19,.55);
+  transition: transform .2s;
+}
+.enter-btn:active{ transform: scale(.96); }
+.enter-btn:focus-visible{ outline: 2px solid var(--yellow-deep); outline-offset: 3px; }
+
+/* ==========================================================================
+   Pantalla 1 — Jardín
+   ========================================================================== */
+.garden-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(8px, 3vw, 16px);
+  margin: 22px 0 20px;
+}
+.garden-flower{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.garden-flower:focus-visible{ outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 10px; }
+.garden-flower svg{ width: 100%; height: auto; max-width: 52px; overflow: visible; }
+.garden-flower .bud{ fill: var(--ink-faint); opacity: .55; transition: fill .3s, opacity .3s; }
+.garden-flower.opened .bud{ opacity: 0; }
+.garden-flower .bloom{ opacity: 0; transform-box: fill-box; transform-origin: center; transition: opacity .3s; }
+.garden-flower.opened .bloom{ opacity: 1; animation: bloom .6s cubic-bezier(.34,1.56,.64,1); }
+.garden-flower .lock-icon{ opacity: 0; transition: opacity .2s; }
+.garden-flower.locked .lock-icon{ opacity: .7; }
+.garden-flower.locked{ cursor: default; }
+.garden-flower .num{
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.garden-message{
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 18px 20px;
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 18px 40px -26px rgba(46,32,19,.4);
+}
+.garden-message p{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(16px, 4vw, 18.5px);
+  line-height: 1.5;
+  color: var(--ink);
+}
+.garden-message p.placeholder-text{ color: var(--ink-faint); }
+.garden-toast{
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--yellow-deep);
+  font-weight: 600;
+  letter-spacing: .03em;
+  opacity: 0;
+  transition: opacity .4s;
+}
+.garden-toast.show{ opacity: 1; }
+
+/* ==========================================================================
+   Pantalla 4 — Carta
+   ========================================================================== */
+.envelope-zone{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.envelope-btn{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: transform .5s ease, opacity .5s ease;
+}
+.envelope-btn:focus-visible{ outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 8px; }
+.envelope-btn.opened{
+  transform: scale(.82) translateY(-10px);
+  opacity: 0;
+  pointer-events: none;
+}
+.envelope-flap{
+  transform-box: fill-box;
+  transform-origin: top center;
+  transition: transform .55s cubic-bezier(.4,0,.2,1), opacity .5s ease;
+}
+.envelope-btn.opened .envelope-flap{ transform: scaleY(.05) translateY(-6px); opacity: 0; }
+.envelope-label{
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.bulb-btn{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-block;
+}
+.bulb-btn:focus-visible{ outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 50%; }
+#bulbGlass .glass{
+  fill: #E7DCC0;
+  stroke: var(--ink-soft);
+  stroke-width: 2;
+  transition: fill .4s, filter .4s, stroke .4s;
+}
+#bulbGlass .filament{ stroke: var(--ink-soft); transition: stroke .4s; }
+.bulb-base{ fill: var(--ink-soft); opacity: .55; }
+.bulb-btn.lit #bulbGlass .glass{
+  fill: var(--yellow-pale);
+  stroke: var(--yellow-deep);
+  filter: drop-shadow(0 0 14px var(--yellow));
+}
+.bulb-btn.lit #bulbGlass .filament{ stroke: var(--yellow-deep); }
+.bulb-btn.flicker{ animation: flicker .45s steps(2,end) 2; }
+@keyframes flicker{ 0%,100%{ opacity: 1; } 50%{ opacity: .3; } }
+.bulb-caption{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 14.5px;
+  color: var(--ink-soft);
+  margin: 4px 0 0;
+  min-height: 20px;
+}
+
+.letter-card{
+  background: var(--paper);
+  width: 100%;
+  padding: clamp(22px, 6vw, 38px) clamp(18px, 6vw, 32px);
+  border-radius: 6px;
+  box-shadow: 0 24px 60px -30px rgba(46, 32, 19, .45), 0 2px 0 var(--yellow-pale);
+  margin-top: 18px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height .8s cubic-bezier(.4,0,.2,1), opacity .6s ease .1s, margin-top .8s;
+  text-align: left;
+}
+.letter-card.show{
+  max-height: 2000px;
+  opacity: 1;
+}
+.greeting{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(24px, 6.5vw, 30px);
+  margin: 0 0 16px;
+}
+.letter-card p.body-p{
+  font-size: 16px;
+  line-height: 1.72;
+  max-width: 62ch;
+  margin: 0 0 16px;
+  color: var(--ink);
+}
+.farewell{ margin-top: 22px; }
+.farewell .lead{ display:block; color: var(--ink-soft); font-size: 14.5px; margin-bottom: 4px; }
+.signature{
+  font-family: 'Caveat', cursive;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--yellow-deep);
+  display: inline-block;
+}
+
+/* ==========================================================================
+   Pantalla 2 — Flor de pétalos
+   ========================================================================== */
+.big-flower-wrap{
+  position: relative;
+  width: clamp(230px, 62vw, 300px);
+  margin: 6px auto 18px;
+}
+.big-flower-wrap svg{ width: 100%; height: auto; overflow: visible; }
+.petal-btn{
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), fill .3s;
+}
+.petal-btn:focus{ outline: none; }
+.petal-btn:focus-visible{ outline: none; filter: drop-shadow(0 0 5px var(--ink)); }
+.petal-btn .petal-shape{ fill: var(--yellow-pale); transition: fill .3s; }
+.petal-btn.revealed .petal-shape{ fill: var(--yellow); }
+.petal-btn.revealed{ transform: scale(1.08); }
+.petal-center{ fill: var(--yellow-deep); }
+
+.petal-hint{
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.petal-progress{
+  font-size: 12px;
+  color: var(--yellow-deep);
+  font-weight: 600;
+  letter-spacing: .03em;
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.petal-list{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  max-width: 320px;
+  margin: 0 auto;
+}
+.petal-item{
+  background: var(--paper);
+  border-radius: 7px;
+  padding: 10px 14px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 15px;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: petalIn .5s ease forwards;
+  box-shadow: 0 10px 24px -18px rgba(46,32,19,.4);
+}
+@keyframes petalIn{
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* ==========================================================================
+   Pantalla 3 — Música
+   ========================================================================== */
+.player-card{
+  background: var(--paper);
+  width: 100%;
+  border-radius: 12px;
+  padding: clamp(20px, 6vw, 28px);
+  box-shadow: 0 24px 60px -30px rgba(46, 32, 19, .45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.cover{
+  width: clamp(140px, 40vw, 180px);
+  height: clamp(140px, 40vw, 180px);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--yellow-pale), var(--yellow) 60%, var(--yellow-deep));
+  box-shadow: 0 16px 30px -16px rgba(196,137,10,.55);
+}
+.cover img{ width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+.song-title{
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
+}
+.song-artist{
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
+.player-controls{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.progress-track{
+  width: 100%;
+  height: 4px;
+  background: var(--yellow-pale);
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.progress-fill{
+  height: 100%;
+  width: 0%;
+  background: var(--yellow-deep);
+  border-radius: 2px;
+}
+.time-row{
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.play-btn{
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ground);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 4px;
+  transition: transform .15s;
+}
+.play-btn:active{ transform: scale(.94); }
+.play-btn:focus-visible{ outline: 2px solid var(--yellow-deep); outline-offset: 3px; }
+.song-note{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   Pantalla 5 — Cierre
+   ========================================================================== */
+.tap-flower{
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.tap-flower:focus-visible{ outline: 2px solid var(--ink); outline-offset: 6px; border-radius: 50%; }
+.tap-flower svg{ overflow: visible; filter: drop-shadow(0 8px 16px rgba(196,137,10,.35)); transform-box: fill-box; transform-origin: center; }
+.flower-flash svg{ animation: flowerFlash 1.6s ease-out; }
+@keyframes flowerFlash{
+  0%{   filter: drop-shadow(0 0 0 rgba(242,183,5,0)); transform: scale(1) rotate(0deg); }
+  18%{  filter: drop-shadow(0 0 40px var(--yellow)); transform: scale(2.2) rotate(-16deg); }
+  36%{  filter: drop-shadow(0 0 26px var(--yellow)); transform: scale(1.5) rotate(14deg); }
+  54%{  filter: drop-shadow(0 0 36px var(--yellow)); transform: scale(1.9) rotate(-10deg); }
+  72%{  filter: drop-shadow(0 0 24px var(--yellow-pale)); transform: scale(1.35) rotate(6deg); }
+  100%{ filter: drop-shadow(0 8px 16px rgba(196,137,10,.35)); transform: scale(1) rotate(0deg); }
+}
+.tap-count{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin: 8px 0 26px;
+}
+.tap-count b{
+  display: inline-block;
+  font-style: normal;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: var(--yellow-deep);
+  transform-origin: center;
+}
+.tap-count b.bump{ animation: tapBump .3s ease-out; }
+@keyframes tapBump{
+  0%{ transform: scale(1); }
+  45%{ transform: scale(1.3); }
+  100%{ transform: scale(1); }
+}
+.tap-count b.infinity-pop{ animation: infinityPop 1.9s cubic-bezier(.34,1.56,.64,1); }
+@keyframes infinityPop{
+  0%{   transform: scale(1) rotate(0deg); text-shadow: none; }
+  15%{  transform: scale(3.2) rotate(-26deg); text-shadow: 0 0 40px var(--yellow); }
+  32%{  transform: scale(1.9) rotate(20deg); text-shadow: 0 0 34px var(--yellow); }
+  50%{  transform: scale(2.7) rotate(-16deg); text-shadow: 0 0 40px var(--yellow); }
+  68%{  transform: scale(1.7) rotate(10deg); text-shadow: 0 0 28px var(--yellow); }
+  85%{  transform: scale(1.9) rotate(-6deg); text-shadow: 0 0 22px var(--yellow-pale); }
+  100%{ transform: scale(1.5) rotate(0deg); text-shadow: 0 0 14px var(--yellow-pale); }
+}
+
+.distance{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto 18px;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink-soft);
+}
+.distance .line{
+  flex: 1;
+  height: 0;
+  border-top: 1.5px dashed var(--yellow-deep);
+}
+.distance .km{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 13px;
+  color: var(--yellow-deep);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.teaser{
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-align: center;
+  margin: 0 0 18px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--yellow-pale);
+}
+.names{
+  font-size: 10.5px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink-soft);
+  opacity: .8;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Accesibilidad / movimiento reducido
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce){
+  .flower-anim, .garden-flower.opened .bloom, .petal-item{ animation: none !important; opacity: 1 !important; transform: none !important; }
+  .petal{ animation: none; display: none; }
+  .fx-petal{ animation: none; opacity: 0; }
+  .pulse{ animation: none; }
+  .stamp{ animation: none; }
+  .bulb-btn.flicker{ animation: none; }
+  .next-hint svg{ animation: none; }
+  .tap-count b.bump, .tap-count b.infinity-pop{ animation: none; }
+  .flower-flash svg{ animation: none; }
+  .stem-sway{ animation: none; }
+  body{ scroll-snap-type: none; }
+}
+
+@media (max-width: 360px){
+  .garden-grid{ grid-template-columns: repeat(4, 1fr); gap: 6px; }
+}
