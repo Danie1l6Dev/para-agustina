@@ -24,6 +24,7 @@ html, body{ background: var(--ground); }
 
 html{ scroll-snap-type: y proximity; }
 body{
+  margin: 0;
   scroll-snap-type: y proximity;
   font-family: 'Karla', -apple-system, 'Segoe UI', sans-serif;
   color: var(--ink);
